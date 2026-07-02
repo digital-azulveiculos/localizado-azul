@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Localizador Azul</title>
+  <title>Localizado Azul</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#003b8f">
 
   <style>
     html, body {
@@ -21,6 +24,22 @@
       border: 0;
       display: block;
     }
+
+    .btn-instalar {
+      position: fixed;
+      right: 14px;
+      bottom: 18px;
+      z-index: 9999;
+      background: #0057b8;
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(0,0,0,.28);
+      display: none;
+    }
   </style>
 </head>
 
@@ -29,5 +48,47 @@
     src="https://script.google.com/macros/s/AKfycbwiuMXfo6_IcNjQsz-J0DwOzDOYS6fGxCf5ug7wCrnunL85QDMO5vQZG0qrFzznWUexrA/exec"
     allow="clipboard-read; clipboard-write"
   ></iframe>
+
+  <button id="btnInstalar" class="btn-instalar" onclick="instalarPWA()">
+    📲 Instalar app
+  </button>
+
+  <script>
+    let deferredPrompt = null;
+    const btnInstalar = document.getElementById('btnInstalar');
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      btnInstalar.style.display = 'block';
+    });
+
+    async function instalarPWA() {
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        btnInstalar.style.display = 'none';
+        return;
+      }
+
+      if (isIOS) {
+        alert('No iPhone: toque no botão Compartilhar do Safari e escolha "Adicionar à Tela de Início".');
+        return;
+      }
+
+      alert('No Android: abra pelo Chrome e escolha "Adicionar à tela inicial".');
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      btnInstalar.style.display = 'block';
+    }
+  </script>
 </body>
 </html>
