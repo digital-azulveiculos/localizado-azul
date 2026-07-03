@@ -58,6 +58,12 @@
     const btnInstalar = document.getElementById('btnInstalar');
 
     window.addEventListener('beforeinstallprompt', function(e) {
+      const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+    
+      if (isStandalone) return;
+    
       e.preventDefault();
       deferredPrompt = e;
       btnInstalar.style.display = 'block';
