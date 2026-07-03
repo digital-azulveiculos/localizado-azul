@@ -86,7 +86,12 @@
       navigator.serviceWorker.register('sw.js');
     }
 
-    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+    
+    if (isIOS && !isStandalone) {
       btnInstalar.style.display = 'block';
     }
   </script>
