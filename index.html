@@ -57,35 +57,51 @@
     let deferredPrompt = null;
     const btnInstalar = document.getElementById('btnInstalar');
 
-    window.addEventListener('beforeinstallprompt', function(e) {
-      const isStandalone =
+    function isIOS() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    function estaInstalado() {
+      return (
         window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true;
-    
-      if (isStandalone) return;
-    
+        window.navigator.standalone === true ||
+        document.referrer.includes('android-app://')
+      );
+    }
+
+    function ocultarBotao() {
+      btnInstalar.style.display = 'none';
+    }
+
+    function mostrarBotao() {
+      if (!estaInstalado()) {
+        btnInstalar.style.display = 'block';
+      }
+    }
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      if (estaInstalado()) {
+        ocultarBotao();
+        return;
+      }
+
       e.preventDefault();
       deferredPrompt = e;
-      btnInstalar.style.display = 'block';
+      mostrarBotao();
     });
 
     async function instalarPWA() {
-      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-
       if (deferredPrompt) {
         deferredPrompt.prompt();
         await deferredPrompt.userChoice;
         deferredPrompt = null;
-        btnInstalar.style.display = 'none';
+        ocultarBotao();
         return;
       }
 
-      if (isIOS) {
+      if (isIOS()) {
         alert('No iPhone: toque no botão Compartilhar do Safari e escolha "Adicionar à Tela de Início".');
-      
-        localStorage.setItem('ocultarBotaoInstalar', 'sim');
-        btnInstalar.style.display = 'none';
-      
+        ocultarBotao();
         return;
       }
 
@@ -96,14 +112,16 @@
       navigator.serviceWorker.register('sw.js');
     }
 
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const isStandalone =
-      window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true;
-    
-    if (isIOS && !isStandalone && localStorage.getItem('ocultarBotaoInstalar') !== 'sim') {
-      btnInstalar.style.display = 'block';
-    }
+    window.addEventListener('load', function() {
+      if (estaInstalado()) {
+        ocultarBotao();
+        return;
+      }
+
+      if (isIOS()) {
+        mostrarBotao();
+      }
+    });
   </script>
 </body>
 </html>
