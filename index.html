@@ -82,6 +82,10 @@
 
       if (isIOS) {
         alert('No iPhone: toque no botão Compartilhar do Safari e escolha "Adicionar à Tela de Início".');
+      
+        localStorage.setItem('ocultarBotaoInstalar', 'sim');
+        btnInstalar.style.display = 'none';
+      
         return;
       }
 
@@ -97,7 +101,7 @@
       window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true;
     
-    if (isIOS && !isStandalone) {
+    if (isIOS && !isStandalone && localStorage.getItem('ocultarBotaoInstalar') !== 'sim') {
       btnInstalar.style.display = 'block';
     }
   </script>
