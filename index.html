@@ -1,35 +1,365 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Localizado Azul</title>
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#003b8f">
 
   <style>
-    html, body {
+    * { box-sizing: border-box; }
+
+    body {
       margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
+      font-family: Arial, sans-serif;
       background: #071b3a;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    iframe {
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      height: 100vh;
+      background: #f4f7fb;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .topbar {
+      height: 74px;
+      background: linear-gradient(135deg, #003b8f, #0077e6);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      flex-shrink: 0;
+    }
+
+    .logoBox {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px;
+    }
+
+    .logoBox img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .title { flex: 1; }
+
+    .title strong {
+      display: block;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .title span {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .clear-btn {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 10px 92px;
+      background:
+        radial-gradient(circle at top right, rgba(0,102,204,0.16), transparent 32%),
+        linear-gradient(180deg, #f7faff 0%, #e8eef7 100%);
+    }
+
+    .message {
+      max-width: 88%;
+      padding: 12px 14px;
+      margin: 8px 0;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.38;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+      clear: both;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: linear-gradient(135deg, #0057b8, #0088ff);
+      color: white;
+      float: right;
+      border-bottom-right-radius: 6px;
+    }
+
+    .bot {
+      background: #ffffff;
+      color: #1f2d3d;
+      float: left;
+      border: 1px solid #dce6f2;
+      border-bottom-left-radius: 6px;
+    }
+
+    .time {
+      display: block;
+      text-align: right;
+      font-size: 10px;
+      margin-top: 6px;
+    }
+
+    .user .time { color: rgba(255,255,255,0.75); }
+    .bot .time { color: #7a869a; }
+
+    .typing {
+      font-style: italic;
+      color: #667085;
+    }
+
+    .input-area {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border-top: 1px solid #dce3ee;
+    }
+
+    .input-area input {
+      flex: 1;
+      border: 1px solid #d7dfec;
+      border-radius: 24px;
+      padding: 13px 16px;
+      font-size: 15px;
+      outline: none;
+      background: #f7f9fc;
+    }
+
+    .input-area input:focus {
+      border-color: #0057b8;
+      background: white;
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #0057b8, #0088ff);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,87,184,0.35);
+    }
+
+    .midia-img {
       width: 100%;
-      height: 100%;
-      border: 0;
+      max-width: 300px;
+      border-radius: 14px;
+      display: block;
+      cursor: pointer;
+    }
+
+    .chatVideo {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 14px;
       display: block;
     }
+
+    .arquivo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f5f8ff;
+      border: 1px solid #dce6f2;
+      border-radius: 14px;
+      padding: 13px;
+      cursor: pointer;
+    }
+
+    .arquivoIcone {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #0057b8;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .arquivoTexto strong {
+      color: #0057b8;
+      font-size: 14px;
+    }
+
+    .arquivoTexto span {
+      color: #667085;
+      font-size: 12px;
+    }
+
+    .message a {
+      color: #0057b8;
+      word-break: break-all;
+      font-weight: 600;
+    }
+
+    .message strong {
+      font-weight: 700;
+    }
+
+    .message em {
+      font-style: italic;
+    }
+
+    .message s {
+      text-decoration: line-through;
+    }
+
+    .message code {
+      display: inline-block;
+      background: #eef2f7;
+      border-radius: 6px;
+      padding: 2px 5px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .user a {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .bot a {
+      color: #0057b8;
+      font-weight: 600;
+    }
+
+    .messageFooter {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .shareBtn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #7a869a;
+      font-size: 17px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .shareBtn:active {
+      background: #eef4ff;
+      color: #0057b8;
+    }
+
+    .user .shareBtn {
+      color: rgba(255,255,255,0.85);
+    }
+
+    .midia-bloco {
+      margin-bottom: 10px;
+    }
+
+    .midia-bloco .midia-img,
+    .midia-bloco .chatVideo {
+      max-width: 100%;
+    }
+
+    .modalArquivo {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modalTopo {
+      height: 54px;
+      background: #003b8f;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+    }
+
+    .modalFechar {
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .modalIframe {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: white;
+    }
+
+    .modalDownload{
+
+        background:#0057b8;
+        color:white;
+
+        border:none;
+
+        border-radius:8px;
+
+        padding:8px 14px;
+
+        font-size:13px;
+
+        cursor:pointer;
+    }
+
+    .modalDownload:active{
+
+        opacity:.8;
+
+    }
+
 
     .btn-instalar {
       position: fixed;
       right: 14px;
-      bottom: 18px;
-      z-index: 9999;
+      bottom: 92px;
+      z-index: 9998;
       background: #0057b8;
       color: white;
       border: none;
@@ -39,23 +369,585 @@
       font-weight: 700;
       box-shadow: 0 4px 14px rgba(0,0,0,.28);
       display: none;
+      cursor: pointer;
     }
+
+    @media (min-width: 900px) {
+      .btn-instalar {
+        right: calc(50% - 245px);
+      }
+    }
+
   </style>
 </head>
 
 <body>
-  <iframe
-    src="https://script.google.com/macros/s/AKfycbwiuMXfo6_IcNjQsz-J0DwOzDOYS6fGxCf5ug7wCrnunL85QDMO5vQZG0qrFzznWUexrA/exec"
-    allow="clipboard-read; clipboard-write; web-share"
-  ></iframe>
+  <div class="app">
+    <div class="topbar">
+      <div class="logoBox">
+        <img src="https://www.azulveiculos.com.br/img/azul-logo.svg" alt="Azul Veículos">
+      </div>
+
+      <div class="title">
+        <strong>Localizado Azul</strong>
+        <span>Consulta rápida de estoque</span>
+      </div>
+
+      <button class="clear-btn" onclick="limparHistorico()">⋮</button>
+    </div>
+
+    <div id="chat" class="chat"></div>
+
+    <div class="input-area">
+      <input
+        id="texto"
+        type="text"
+        placeholder="Digite placa, modelo ou palavra-chave..."
+        onkeydown="if(event.key === 'Enter') enviarMensagem()"
+      />
+      <button class="send-btn" onclick="enviarMensagem()">➤</button>
+    </div>
+  </div>
 
   <button id="btnInstalar" class="btn-instalar" onclick="instalarPWA()">
     📲 Instalar app
   </button>
 
+
   <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('texto');
+
+    let historico = JSON.parse(localStorage.getItem('historicoLocalizadorAzul') || '[]');
+
+    iniciar();
+
+    function iniciar() {
+      if (historico.length === 0) {
+        adicionarMensagem(
+          'bot',
+          `Olá! 👋
+
+Sou o Localizado Azul.
+
+Digite uma placa para consultar ou *menu* para ver as opções.`
+        );
+      } else {
+        historico.forEach(msg => {
+          if (msg.tipoConteudo === 'mensagemMidia') {
+            renderizarMensagemComMidia(msg.tipo, msg.texto, msg.link, msg.tipoMidia, msg.hora, msg.nomeArquivo, false);
+          } else if (msg.tipoConteudo === 'midia') {
+            renderizarMidia(msg.tipo, msg.link, msg.tipoMidia, msg.hora, msg.nomeArquivo);
+          } else {
+            renderizarMensagem(msg.tipo, msg.texto, msg.hora, false);
+          }
+        });
+      }
+
+      rolarParaBaixo();
+    }
+
+    function enviarMensagem() {
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      adicionarMensagem('user', texto);
+      input.value = '';
+
+      consultarEstoque(texto);
+    }
+
+    function adicionarMensagem(tipo, texto) {
+      const hora = horaAtual();
+
+      const msg = { tipo, texto, hora, tipoConteudo: 'texto' };
+
+      historico.push(msg);
+      salvarHistorico();
+
+      renderizarMensagem(tipo, texto, hora, true);
+    }
+
+    function renderizarMensagem(tipo, texto, hora, salvarScroll) {
+      const div = document.createElement('div');
+      div.className = `message ${tipo}`;
+
+      const conteudo = document.createElement('div');
+      conteudo.innerHTML = formatarTexto(texto);
+      div.appendChild(conteudo);
+
+      const footer = criarRodapeMensagem(tipo, texto, '', hora);
+      div.appendChild(footer);
+
+      chat.appendChild(div);
+
+      if (salvarScroll) rolarParaBaixo();
+    }
+
+    async function consultarEstoque(termo) {
+      mostrarDigitando();
+
+      try {
+        const dados = await consultarComRetry(termo, 2);
+
+        removerDigitando();
+
+        if (dados.autorizado === false) {
+          adicionarMensagem('bot', '❌ Este telefone não está autorizado para consultar o estoque.');
+          return;
+        }
+
+        if (!dados.ok) {
+          adicionarMensagem('bot', dados.reply || '❌ Não encontrei resultado para essa consulta.');
+          return;
+        }
+
+        if (dados.link) {
+          adicionarMensagemComMidia('bot', dados.reply || 'Resultado encontrado.', dados.link);
+        } else {
+          adicionarMensagem('bot', dados.reply || 'Resultado encontrado.');
+        }
+
+      } catch (erro) {
+        removerDigitando();
+        adicionarMensagem('bot', 'Não consegui consultar agora. Tente novamente em alguns segundos.');
+      }
+    }
+
+
+    async function consultarComRetry(termo, tentativas) {
+      const endpoint = 'https://script.google.com/macros/s/AKfycbzF1NQVEWNr92Lyo9fVkm2dXX0dmjDGcWAtlT-cfmLmY8vkpv8TrCu51T1t-kBDBOvr/exec';
+
+      const token = 'abc1234';
+      const telefone = '5519998145315';
+
+      let ultimoErro = null;
+
+      for (let i = 1; i <= tentativas; i++) {
+        try {
+          const url =
+            endpoint +
+            '?token=' + encodeURIComponent(token) +
+            '&telefone=' + encodeURIComponent(telefone) +
+            '&texto=' + encodeURIComponent(termo) +
+            '&t=' + Date.now();
+
+          const resp = await fetch(url, {
+            method: 'GET',
+            redirect: 'follow',
+            cache: 'no-store'
+          });
+
+          const textoResposta = await resp.text();
+
+          if (!textoResposta.trim().startsWith('{')) {
+            throw new Error('Resposta não veio em JSON');
+          }
+
+          return JSON.parse(textoResposta);
+
+        } catch (e) {
+          ultimoErro = e;
+          await esperar(700);
+        }
+      }
+
+      throw ultimoErro;
+    }
+
+    function esperar(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function adicionarMidia(tipo, link) {
+      const tipoMidia = identificarPorExtensao(link);
+      const hora = horaAtual();
+      const nomeArquivo = extrairNomeDaUrl(link);
+
+      historico.push({
+        tipo,
+        link,
+        tipoMidia,
+        nomeArquivo,
+        hora,
+        tipoConteudo: 'midia'
+      });
+
+      salvarHistorico();
+      renderizarMidia(tipo, link, tipoMidia, hora, nomeArquivo);
+    }
+
+    function adicionarMensagemComMidia(tipo, texto, link) {
+      const hora = horaAtual();
+      const tipoMidia = identificarPorExtensao(link);
+      const nomeArquivo = extrairNomeDaUrl(link);
+
+      historico.push({
+        tipo,
+        texto,
+        link,
+        tipoMidia,
+        nomeArquivo,
+        hora,
+        tipoConteudo: 'mensagemMidia'
+      });
+
+      salvarHistorico();
+      renderizarMensagemComMidia(tipo, texto, link, tipoMidia, hora, nomeArquivo, true);
+    }
+
+    function renderizarMensagemComMidia(tipo, texto, link, tipoMidia, hora, nomeArquivo, salvarScroll) {
+      const div = document.createElement('div');
+      div.className = `message ${tipo}`;
+
+      const url = escaparAtributo(link);
+      //const nome = nomeArquivo || 'Arquivo';
+      const nome = 'Arquivo' || 'Arquivo';
+
+      const midia = document.createElement('div');
+      midia.className = 'midia-bloco';
+
+      if (tipoMidia === 'imagem') {
+        midia.innerHTML = `
+          <a href="${url}" target="_blank">
+            <img src="${url}" class="midia-img">
+          </a>
+        `;
+      } else if (tipoMidia === 'video') {
+        midia.innerHTML = `
+          <video controls class="chatVideo">
+            <source src="${url}">
+          </video>
+        `;
+      } else if (tipoMidia === 'pdf') {
+        midia.innerHTML = cardArquivo('📄', nome, 'PDF • Toque para abrir', '');
+        midia.onclick = () => abrirArquivoInterno(link);
+      } else if (tipoMidia === 'planilha') {
+        midia.innerHTML = cardArquivo('📊', nome, 'Planilha • Toque para abrir', '');
+        midia.onclick = () => abrirArquivoInterno(link);
+      } else if (tipoMidia === 'documento') {
+        midia.innerHTML = cardArquivo('📝', nome, 'Documento • Toque para abrir', '');
+        midia.onclick = () => abrirArquivoInterno(link);
+      } else {
+        midia.innerHTML = cardArquivo('📎', nome, 'Arquivo ou link • Toque para abrir', '');
+        midia.onclick = () => abrirArquivoInterno(link);
+      }
+
+      div.appendChild(midia);
+
+      const conteudo = document.createElement('div');
+      conteudo.innerHTML = formatarTexto(texto);
+      div.appendChild(conteudo);
+
+      const footer = criarRodapeMensagem(tipo, texto, link, hora);
+      div.appendChild(footer);
+
+      chat.appendChild(div);
+
+      if (salvarScroll) rolarParaBaixo();
+    }
+
+    function criarRodapeMensagem(tipo, texto, link, hora) {
+      const footer = document.createElement('div');
+      footer.className = 'messageFooter';
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'shareBtn';
+      btn.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="18"
+     height="18"
+     viewBox="0 0 24 24"
+     fill="currentColor">
+  <path d="M18 8C19.6569 8 21 6.65685 21 5C21 3.34315 19.6569 2 18 2C16.3431 2 15 3.34315 15 5C15 5.2254 15.0249 5.44498 15.0721 5.656L8.91 9.19C8.36 8.45 7.48 8 6.5 8C4.84 8 3.5 9.34 3.5 11C3.5 12.66 4.84 14 6.5 14C7.48 14 8.36 13.55 8.91 12.81L15.08 16.35C15.03 16.56 15 16.78 15 17C15 18.66 16.34 20 18 20C19.66 20 21 18.66 21 17C21 15.34 19.66 14 18 14C17.02 14 16.14 14.45 15.59 15.19L9.42 11.65C9.47 11.44 9.5 11.22 9.5 11C9.5 10.78 9.47 10.56 9.42 10.35L15.59 6.81C16.14 7.55 17.02 8 18 8Z"/>
+</svg>`;
+      btn.title = 'Compartilhar';
+      btn.onclick = function(event) {
+        event.stopPropagation();
+        compartilharMensagem(texto, link);
+      };
+
+      const spanHora = document.createElement('span');
+      spanHora.className = 'time';
+      spanHora.textContent = hora;
+
+      footer.appendChild(btn);
+      footer.appendChild(spanHora);
+
+      return footer;
+    }
+
+    async function compartilharMensagem(texto, link) {
+      let conteudo = String(texto || '').trim();
+
+      if (link) {
+        conteudo += '\n\n' + link;
+      }
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ text: conteudo });
+          return;
+        } catch (e) {
+          return;
+        }
+      }
+
+      window.open(
+        'https://wa.me/?text=' + encodeURIComponent(conteudo),
+        '_blank'
+      );
+    }
+
+    function renderizarMidia(tipo, link, tipoMidia, hora, nomeArquivo) {
+      const div = document.createElement('div');
+      div.className = `message ${tipo}`;
+
+      const url = escaparAtributo(link);
+      const nome = nomeArquivo || 'Arquivo';
+
+      if (tipoMidia === 'imagem') {
+        div.innerHTML = `
+          <a href="${url}" target="_blank">
+            <img src="${url}" class="midia-img">
+          </a>
+          <span class="time">${hora}</span>
+        `;
+      } else if (tipoMidia === 'video') {
+        div.innerHTML = `
+          <video controls class="chatVideo">
+            <source src="${url}">
+          </video>
+          <span class="time">${hora}</span>
+        `;
+      } else if (tipoMidia === 'pdf') {
+        div.innerHTML = cardArquivo('📄', nome, 'PDF • Toque para abrir', hora);
+        div.onclick = () => abrirArquivoInterno(link);
+      } else if (tipoMidia === 'planilha') {
+        div.innerHTML = cardArquivo('📊', nome, 'Planilha • Toque para abrir', hora);
+        div.onclick = () => abrirArquivoInterno(link);
+      } else if (tipoMidia === 'documento') {
+        div.innerHTML = cardArquivo('📝', nome, 'Documento • Toque para abrir', hora);
+        div.onclick = () => abrirArquivoInterno(link);
+      } else {
+        div.innerHTML = cardArquivo('📎', nome, 'Arquivo ou link • Toque para abrir', hora);
+        div.onclick = () => abrirArquivoInterno(link);
+      }
+
+      chat.appendChild(div);
+      rolarParaBaixo();
+    }
+
+    function cardArquivo(icone, titulo, subtitulo, hora) {
+      return `
+        <div class="arquivo">
+          <div class="arquivoIcone">${icone}</div>
+          <div class="arquivoTexto">
+            <strong>${titulo}</strong><br>
+            <span>${subtitulo}</span>
+          </div>
+        </div>
+        ${hora ? `<span class="time">${hora}</span>` : ''}
+      `;
+    }
+
+    function identificarPorExtensao(link) {
+      const limpo = String(link || '').split('?')[0].toLowerCase();
+
+      if (/\.(jpg|jpeg|png|webp|gif)$/i.test(limpo)) return 'imagem';
+      if (/\.pdf$/i.test(limpo)) return 'pdf';
+      if (/\.(mp4|mov|webm|avi)$/i.test(limpo)) return 'video';
+      if (/\.(xls|xlsx|csv)$/i.test(limpo)) return 'planilha';
+      if (/\.(doc|docx)$/i.test(limpo)) return 'documento';
+
+      return 'link';
+    }
+
+
+    function extrairNomeDaUrl(url) {
+      try {
+        const limpo = String(url || '').split('?')[0];
+        const partes = limpo.split('/');
+        const nome = partes[partes.length - 1];
+        return decodeURIComponent(nome || 'Arquivo');
+      } catch (e) {
+        return 'Arquivo';
+      }
+    }
+
+    function mostrarDigitando() {
+      const div = document.createElement('div');
+      div.id = 'digitando';
+      div.className = 'message bot typing';
+      div.innerHTML = 'Buscando, por favor aguarde...';
+      chat.appendChild(div);
+      rolarParaBaixo();
+    }
+
+    function removerDigitando() {
+      const div = document.getElementById('digitando');
+      if (div) div.remove();
+    }
+
+    function limparHistorico() {
+      if (!confirm('Deseja apagar o histórico desta conversa?')) return;
+
+      localStorage.removeItem('historicoLocalizadorAzul');
+      historico = [];
+      chat.innerHTML = '';
+
+      adicionarMensagem(
+        'bot',
+        'Histórico apagado.\n\nDigite uma placa ou *menu* para mais opções.'
+      );
+    }
+
+    function salvarHistorico() {
+      localStorage.setItem('historicoLocalizadorAzul', JSON.stringify(historico));
+    }
+
+    function horaAtual() {
+      return new Date().toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function formatarTexto(texto) {
+      let t = String(texto || '');
+
+      t = t
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // links clicáveis
+      t = t.replace(
+        /(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+      );
+
+      // WhatsApp: *negrito*
+      t = t.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+
+      // WhatsApp: _itálico_
+      t = t.replace(/_(.*?)_/g, '<em>$1</em>');
+
+      // WhatsApp: ~riscado~
+      t = t.replace(/~(.*?)~/g, '<s>$1</s>');
+
+      // WhatsApp: ```monoespaçado```
+      t = t.replace(/```([\s\S]*?)```/g, '<code>$1</code>');
+
+      // quebras de linha
+      t = t.replace(/\n/g, '<br>');
+
+      return t;
+    }
+
+    function escaparAtributo(texto) {
+      return String(texto || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function rolarParaBaixo() {
+      setTimeout(() => {
+        chat.scrollTop = chat.scrollHeight;
+      }, 100);
+    }
+
+    function prepararLinkParaAbrir(link) {
+      const id = extrairIdDriveFront(link);
+
+      if (id) {
+        return 'https://drive.google.com/file/d/' + id + '/view';
+      }
+
+      return link;
+    }
+
+    function extrairIdDriveFront(link) {
+      const texto = String(link || '');
+
+      let match = texto.match(/[?&]id=([^&]+)/);
+      if (match && match[1]) return match[1];
+
+      match = texto.match(/\/file\/d\/([^/]+)/);
+      if (match && match[1]) return match[1];
+
+      return '';
+    }    
+
+    function abrirArquivoInterno(link) {
+      const id = extrairIdDriveFront(link);
+
+      let urlAbrir = link;
+
+      if (id) {
+        urlAbrir = 'https://drive.google.com/file/d/' + id + '/preview';
+      }
+
+      const modal = document.createElement('div');
+      modal.className = 'modalArquivo';
+
+      modal.innerHTML = `
+        <div class="modalTopo">
+
+          <button
+            class="modalFechar"
+            onclick="this.closest('.modalArquivo').remove()">
+            ✕
+          </button>
+
+          <strong style="flex:1">
+            Visualizar arquivo
+          </strong>
+
+          <button
+            class="modalDownload"
+            onclick="baixarArquivo('${escaparAtributo(link)}')">
+            ⬇️ Download
+          </button>
+
+        </div>
+
+        <iframe
+            src="${escaparAtributo(urlAbrir)}"
+            class="modalIframe">
+        </iframe>
+      `;
+
+      document.body.appendChild(modal);
+    }
+
+    function baixarArquivo(link){
+
+        const a=document.createElement("a");
+
+        a.href=link;
+
+        a.target="_blank";
+
+        a.rel="noopener";
+
+        a.download="";
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+    }
+
+    // ===============================
+    // PWA / Instalação
+    // ===============================
     let deferredPrompt = null;
-    const btnInstalar = document.getElementById('btnInstalar');
 
     function isIOS() {
       return /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -69,25 +961,31 @@
       );
     }
 
-    function ocultarBotao() {
-      btnInstalar.style.display = 'none';
+    function botaoInstalar() {
+      return document.getElementById('btnInstalar');
     }
 
-    function mostrarBotao() {
-      if (!estaInstalado()) {
-        btnInstalar.style.display = 'block';
+    function ocultarBotaoInstalar() {
+      const btn = botaoInstalar();
+      if (btn) btn.style.display = 'none';
+    }
+
+    function mostrarBotaoInstalar() {
+      const btn = botaoInstalar();
+      if (btn && !estaInstalado()) {
+        btn.style.display = 'block';
       }
     }
 
     window.addEventListener('beforeinstallprompt', function(e) {
       if (estaInstalado()) {
-        ocultarBotao();
+        ocultarBotaoInstalar();
         return;
       }
 
       e.preventDefault();
       deferredPrompt = e;
-      mostrarBotao();
+      mostrarBotaoInstalar();
     });
 
     async function instalarPWA() {
@@ -95,13 +993,13 @@
         deferredPrompt.prompt();
         await deferredPrompt.userChoice;
         deferredPrompt = null;
-        ocultarBotao();
+        ocultarBotaoInstalar();
         return;
       }
 
       if (isIOS()) {
         alert('No iPhone: toque no botão Compartilhar do Safari e escolha "Adicionar à Tela de Início".');
-        ocultarBotao();
+        ocultarBotaoInstalar();
         return;
       }
 
@@ -109,19 +1007,22 @@
     }
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+      navigator.serviceWorker.register('sw.js').catch(function(e) {
+        console.log('Falha ao registrar Service Worker:', e);
+      });
     }
 
     window.addEventListener('load', function() {
       if (estaInstalado()) {
-        ocultarBotao();
+        ocultarBotaoInstalar();
         return;
       }
 
       if (isIOS()) {
-        mostrarBotao();
+        mostrarBotaoInstalar();
       }
     });
+
   </script>
 </body>
 </html>
