@@ -1,20 +1,26 @@
 {
+  "id": "/",
   "name": "Localizado Azul",
-  "short_name": "Localizado Azul",
-  "start_url": "./",
+  "short_name": "Localizado",
+  "description": "Consulta rápida do estoque da Azul Veículos",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#071b3a",
   "theme_color": "#003b8f",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
